@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 function sortArray(array) {
 	return array.slice().sort((a, b) => a - b);
@@ -62,13 +62,27 @@ module.exports = {
 		let temp_sum = 0;
 		reg_dice.forEach(die => temp_sum += die);
 		if (boost_die) {
-			temp_sum += boost_die + static_bonus;
+			temp_sum += boost_die;
 		}
-		sums.push(temp_sum);
+		sums.push(temp_sum + static_bonus);
 
 		// Create the message
-		const msg = `\`\`\`\nRegular Dice | ${sortArray(reg_dice).join(', ')}\nBonus Dice | ${bon_dice.length > 0 ? sortArray(bon_dice).join(', ') : 'N/A'}\nBoost Die | ${boost_die > 0 ? boost_die : 'N/A'}\nStatic Bonus | ${static_bonus > 0 ? static_bonus : 'N/A'}\nSums | ${removeDuplicates(sortArray(sums)).join(', ')}\n\`\`\``;
+		// const msg = `\`\`\`\nRegular Dice | ${sortArray(reg_dice).join(', ')}\nBonus Dice | ${bon_dice.length > 0 ? sortArray(bon_dice).join(', ') : 'N/A'}\nBoost Die | ${boost_die > 0 ? boost_die : 'N/A'}\nStatic Bonus | ${static_bonus > 0 ? static_bonus : 'N/A'}\nSums | ${removeDuplicates(sortArray(sums)).join(', ')}\n\`\`\``;
 
-		await interaction.reply(msg);
+		// await interaction.reply(msg);
+
+		const embed = new EmbedBuilder()
+			.setTitle(`Roll Results: ${Math.max(...sums)}`)
+			.addFields(
+				{ name: 'Regular Dice', value: `${sortArray(reg_dice).join(', ')}`, inline: true },
+				{ name: '\u200b', value: '\u200b', inline: true },
+				{ name: 'Bonus Dice', value: `${bon_dice.length > 0 ? sortArray(bon_dice).join(', ') : 'N/A'}`, inline: true },
+				{ name: 'Boost Dice', value: `${ boost_die > 0 ? boost_die : 'N/A'}`, inline: true },
+				{ name: '\u200b', value: '\u200b', inline: true },
+				{ name: 'Static Bonus', value: `${static_bonus > 0 ? static_bonus : 'N/A'}`, inline: true },
+				{ name: 'All Results', value: `${removeDuplicates(sortArray(sums)).join(', ')}` },
+			);
+
+		await interaction.reply({ embeds: [embed] });
 	},
 };

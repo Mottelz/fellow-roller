@@ -10,9 +10,8 @@
   "author": "Mottelz",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^14.17.3",
-    "dotenv": "^16.4.7"
-  },
+    "discord.js": "^14.17.3"
+    },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
     "eslint": "^9.18.0"

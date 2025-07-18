@@ -48,28 +48,25 @@ module.exports = {
 			boost_die = Math.ceil(Math.random() * 6);
 		}
 
-		// Calculate sums
-		if (bon_dice.length > 0) {
-			for (r = 0; r < reg_dice.length; r++) {
-				for (const bonus_die of bon_dice) {
-					const sum = reg_dice.reduce((acc, val, index) => acc + (index === r ? bonus_die : val));
-					sums.push(sum + boost_die + static_bonus);
-				}
-			}
-		}
-
 		// sum regular dice and add boost
 		let temp_sum = 0;
 		reg_dice.forEach(die => temp_sum += die);
+		sums.push(temp_sum);
 		if (boost_die) {
-			temp_sum += boost_die;
+			sums.push(temp_sum + boost_die);
 		}
-		sums.push(temp_sum + static_bonus);
 
-		// Create the message
-		// const msg = `\`\`\`\nRegular Dice | ${sortArray(reg_dice).join(', ')}\nBonus Dice | ${bon_dice.length > 0 ? sortArray(bon_dice).join(', ') : 'N/A'}\nBoost Die | ${boost_die > 0 ? boost_die : 'N/A'}\nStatic Bonus | ${static_bonus > 0 ? static_bonus : 'N/A'}\nSums | ${removeDuplicates(sortArray(sums)).join(', ')}\n\`\`\``;
+		for (let b = 0; b < bon_dice.length; b++) {
+			bonus_die = bon_dice[b];
+			for (let r = 0; r < reg_dice.length; r++) {
+				temp_sum = sums[0] - reg_dice[r] + bon_dice[b];
+				sums.push(temp_sum);
+			}
+		}
 
-		// await interaction.reply(msg);
+		if (static_bonus) {
+			sums.push(...sums.map(total => total + static_bonus));
+		}
 
 		const embed = new EmbedBuilder()
 			.setTitle(`Roll Results: ${Math.max(...sums)}`)

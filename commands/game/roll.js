@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require('discord.js');
 
 function sortArray(array) {
 	return array.slice().sort((a, b) => a - b);
@@ -12,17 +12,24 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('roll')
 		.setDescription('Roll dice')
-		.addIntegerOption(option => option.setName('regular_dice')
+		.addIntegerOption(option => option
+			.setName('regular_dice')
 			.setDescription('Number of regular dice')
 			.setRequired(true))
-		.addIntegerOption(option => option.setName('bonus_dice')
+		.addIntegerOption(option => option
+			.setName('bonus_dice')
 			.setDescription('Number of regular dice'))
-		.addIntegerOption(option => option.setName('static_bonus')
-			.setDescription('Static bonus value')),
+		.addIntegerOption(option => option
+			.setName('static_bonus')
+			.setDescription('Static bonus value'))
+		.addBooleanOption(option => option
+			.setName('whisper')
+			.setDescription('Hide the results from everyone but you')),
 	async execute(interaction) {
 		const reg_dice_count = await interaction.options.getInteger('regular_dice');
 		const bon_dice_count = await interaction.options.getInteger('bonus_dice') ?? 0;
 		const static_bonus = await interaction.options.getInteger('static_bonus') ?? 0;
+		const whisper = await interaction.options.getBoolean('whisper') ?? false;
 		const reg_dice = [];
 		const bon_dice = [];
 		const sums = [];
@@ -80,6 +87,11 @@ module.exports = {
 				{ name: 'All Results', value: `${removeDuplicates(sortArray(sums)).join(', ')}` },
 			);
 
-		await interaction.reply({ embeds: [embed] });
+		if (whisper) {
+			await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
+		}
+		else {
+			await interaction.reply({ embeds: [embed] });
+		}
 	},
 };

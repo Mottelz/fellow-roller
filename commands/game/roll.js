@@ -51,7 +51,7 @@ module.exports = {
 			.addFields(
 				{ name: 'Rolled Dice', value: `${dice}`, inline: true },
 				{ name: '\u200b', value: '\u200b', inline: true },
-				{ name: '\u200b', value: '\u200b', inline: true },
+				{ name: 'Dice Count', value: `Reg: ${reg_dice_count}, Bon: ${bon_dice_count}`, inline: true },
 				{ name: 'Boost Die', value: `${boost_die > 0 ? boost_die : 'N/A'}`, inline: true },
 				{ name: '\u200b', value: '\u200b', inline: true },
 				{ name: 'Static Bonus', value: `${static_bonus > 0 ? static_bonus : 'N/A'}`, inline: true },
